@@ -66,6 +66,7 @@ for z = startZ, endZ, stepZ do
     tweenTo(Vector3.new(x, y, z), duration)
 
     -- Locate Unicorn in the specified folder
+    print("Searching for Unicorn...")
     local unicorn = game.Workspace.Baseplates.Baseplate.CenterBaseplate.Animals:FindFirstChild("Unicorn")
     if unicorn and unicorn:IsA("Model") then
         logEntity("Unicorn", unicorn.PrimaryPart.Position)
@@ -79,6 +80,7 @@ for z = startZ, endZ, stepZ do
     end
 
     -- Fallback Option 1: Locate Model_Horse
+    print("Searching for Horse...")
     local horse = game.Workspace.Baseplates.Baseplate.CenterBaseplate.Animals:FindFirstChild("Model_Horse")
     if horse and horse:IsA("Model") then
         logEntity("Horse", horse.PrimaryPart.Position)
@@ -92,6 +94,7 @@ for z = startZ, endZ, stepZ do
     end
 
     -- Fallback Option 2: Locate Chair in Workspace.RuntimeItems
+    print("Searching for Chair...")
     local chair = game.Workspace.RuntimeItems:FindFirstChild("Chair")
     if chair then
         local seat = chair:FindFirstChild("Seat")
