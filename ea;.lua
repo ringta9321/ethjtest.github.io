@@ -14,6 +14,7 @@ local endZ = -49032.99
 local stepZ = -2000
 local duration = 0.5
 local loggedEntities = {}
+local unicornFound = false -- Track whether Unicorn is found
 
 -- Function for tweening
 local function tweenTo(targetPosition, duration)
@@ -53,10 +54,17 @@ for z = startZ, endZ, stepZ do
             tweenTo(unicornSeat.Position, duration)
             unicornSeat:Sit(humanoid)
             print("Successfully seated on Unicorn!")
+            unicornFound = true
             break
         else
             print("Unicorn found, but it does not have a seat!")
+            unicornFound = true
             break
         end
     end
+end
+
+-- Final check after tweening completes
+if not unicornFound then
+    print("Couldn't find Unicorn after reaching the end Z-coordinate.")
 end
