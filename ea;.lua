@@ -43,7 +43,7 @@ for z = startZ, endZ, stepZ do
     tweenTo(Vector3.new(x, y, z), duration)
 
     -- Locate Unicorn in the specified folder
-    local unicorn = game.Workspace.Baseplates.CenterBaseplate.Animals:FindFirstChild("Unicorn")
+    local unicorn = game.Workspace.Baseplates.Baseplate.CenterBaseplate.Animals:FindFirstChild("Unicorn")
     if unicorn and unicorn:IsA("Model") then
         logEntity("Unicorn", unicorn.PrimaryPart.Position)
 
