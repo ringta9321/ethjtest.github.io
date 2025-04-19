@@ -19,7 +19,7 @@ local fallbackUsed = false -- Track whether fallback was used
 
 -- Function for tweening
 local function tweenTo(targetPosition, duration)
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingStyle.Linear) -- Smooth tweening style
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out) -- Proper arguments for TweenInfo.new
     local goal = {CFrame = CFrame.new(targetPosition)}
     local tween = TweenService:Create(humanoidRootPart, tweenInfo, goal)
     tween:Play()
