@@ -15,6 +15,7 @@ local stepZ = -2000
 local duration = 0.5
 local loggedEntities = {}
 local unicornFound = false -- Track whether Unicorn is found
+local fallbackUsed = false -- Track whether fallback was used
 
 -- Function for tweening
 local function tweenTo(targetPosition, duration)
@@ -38,7 +39,28 @@ local function logEntity(name, position)
     end
 end
 
--- Step-based tweening to locate Unicorn
+-- Attempt to sit on an animal or a chair
+local function trySit(target, seatName)
+    local seat = target:FindFirstChild(seatName)
+    if seat then
+        -- Check if the seat is occupied
+        if seat.Occupant then
+            print(target.Name .. "'s seat is occupied! Cannot sit down.")
+            return false -- Seat is occupied
+        else
+            -- Sit on the seat
+            tweenTo(seat.Position, duration)
+            seat:Sit(humanoid)
+            print("Successfully seated on " .. target.Name .. "!")
+            return true -- Successfully seated
+        end
+    else
+        print(target.Name .. " found, but it does not have a valid seat!")
+        return false -- No valid seat
+    end
+end
+
+-- Step-based tweening to locate Unicorn, Horse, or Chair
 for z = startZ, endZ, stepZ do
     -- Tween smoothly to the next position
     tweenTo(Vector3.new(x, y, z), duration)
@@ -48,23 +70,45 @@ for z = startZ, endZ, stepZ do
     if unicorn and unicorn:IsA("Model") then
         logEntity("Unicorn", unicorn.PrimaryPart.Position)
 
-        local unicornSeat = unicorn:FindFirstChild("VehicleSeat")
-        if unicornSeat then
-            -- Sit on the Unicorn's seat immediately
-            tweenTo(unicornSeat.Position, duration)
-            unicornSeat:Sit(humanoid)
-            print("Successfully seated on Unicorn!")
+        if trySit(unicorn, "VehicleSeat") then
             unicornFound = true
-            break
+            break -- Successfully seated on Unicorn, exit loop
         else
-            print("Unicorn found, but it does not have a seat!")
-            unicornFound = true
-            break
+            print("Unable to sit on Unicorn! Checking for fallback...")
+        end
+    end
+
+    -- Fallback Option 1: Locate Model_Horse
+    local horse = game.Workspace.Baseplates.Baseplate.CenterBaseplate.Animals:FindFirstChild("Model_Horse")
+    if horse and horse:IsA("Model") then
+        logEntity("Horse", horse.PrimaryPart.Position)
+
+        if trySit(horse, "VehicleSeat") then
+            fallbackUsed = true
+            break -- Successfully seated on Horse, exit loop
+        else
+            print("Unable to sit on Horse! Checking for further fallback...")
+        end
+    end
+
+    -- Fallback Option 2: Locate Chair in Workspace.RuntimeItems
+    local chair = game.Workspace.RuntimeItems:FindFirstChild("Chair")
+    if chair then
+        local seat = chair:FindFirstChild("Seat")
+        if seat then
+            if trySit(chair, "Seat") then
+                fallbackUsed = true
+                break -- Successfully seated on Chair, exit loop
+            else
+                print("Unable to sit on Chair!")
+            end
+        else
+            print("Chair found, but it does not have a Seat!")
         end
     end
 end
 
--- Final check after tweening completes
-if not unicornFound then
-    print("Couldn't find Unicorn after reaching the end Z-coordinate.")
+-- Final check after all options are exhausted
+if not unicornFound and not fallbackUsed then
+    print("Couldn't find a suitable seat on Unicorn, Horse, or Chair after reaching the end Z-coordinate.")
 end
